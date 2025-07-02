@@ -1,10 +1,10 @@
 import 'monster.dart';
 
 class Character {
-  String name;
-  int hp;
-  int attackPower;
-  int defensePower;
+  final String name;
+  final int hp;
+  final int attackPower;
+  final int defensePower;
 
   Character(this.name, this.hp, this.attackPower, this.defensePower);
 
