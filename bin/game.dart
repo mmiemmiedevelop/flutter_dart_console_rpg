@@ -40,19 +40,33 @@ class Game {
             break;
           }
           stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): \n');
-          String? nextInput = stdin.readLineSync();
-          if (nextInput == null || nextInput.toLowerCase() != 'y') {
-            gameEndisSaveFile();
+          while (true) {
+            String? nextInput = stdin.readLineSync();
+            if (nextInput == null) {
+              stderr.writeln('입력이 올바르지 않습니다.');
+              continue;
+            }
+            nextInput = nextInput.trim().toLowerCase();
+            if (nextInput == 'y') {
+              monster = getRandomMonster(current: monster);
+              if (monster == null) {
+                print('더 이상 남은 몬스터가 없습니다!');
+                gameEndisSaveFile();
+                break;
+              }
+              print('\n새로운 몬스터가 나타났습니다!');
+              monster.showStatus();
+              break;
+            } else if (nextInput == 'n') {
+              gameEndisSaveFile();
+              break;
+            } else {
+              stderr.writeln('y 또는 n으로 입력해주세요.');
+            }
+          }
+          if (monster == null || character.hp <= 0) {
             break;
           }
-          monster = getRandomMonster(current: monster);
-          if (monster == null) {
-            print('더 이상 남은 몬스터가 없습니다!');
-            gameEndisSaveFile();
-            break;
-          }
-          print('\n새로운 몬스터가 나타났습니다!');
-          monster.showStatus();
           continue;
         }
       } else if (input == '2') {
