@@ -41,8 +41,8 @@ class Game {
           }
           break;
         case '2': // 방어
-          int blocked = character.defend(monster.attackPower);
-          print('${character.name}이(가) 방어 태세를 취하여 $blocked 만큼 피해를 막았습니다.\n');
+          int gained = character.defend(monster.attackPower);
+          print('${character.name}이(가) 방어 태세를 취하여 $gained 만큼 체력을 얻었습니다.\n');
           break;
         case '3': // 특수 아이템 사용
           character.useSpecialItem();
@@ -57,6 +57,8 @@ class Game {
           print('잘못된 입력입니다. 다시 입력하세요.');
           continue;
       }
+
+      //몬스터의 공격
       if (monster != null && monster.hp > 0) {
         print('\n${monster.name}의 턴');
         monster.attack(character);
@@ -122,6 +124,7 @@ class Game {
   //0-3. 몬스터 처치 후 처리 공통 메소드
   bool checkMonsterDefeated(Monster monster) {
     if (monster.hp <= 0) {
+      // 몬스터가 죽었다는 뜻
       print('${monster.name}을(를) 물리쳤습니다!');
       killedMonsters.add(monster);
       if (killedMonsters.length == monsters.length) {
@@ -174,7 +177,7 @@ class Game {
         final name = parts[0];
         final hp = int.parse(parts[1]);
         final attackPowerMax = int.parse(parts[2]);
-        monsters.add(Monster(name, hp, attackPowerMax));
+        monsters.add(Monster(name, hp, attackPowerMax, character.defensePower));
       }
     } catch (e) {
       stderr.writeln('몬스터 데이터를 불러오는 데 실패했습니다: $e');

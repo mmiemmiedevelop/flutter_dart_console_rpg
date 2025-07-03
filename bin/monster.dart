@@ -9,15 +9,19 @@ class Monster extends Entity {
   final int attackPowerMax; // 텍스트에서 읽어온 최대 공격력
   final int defense = 0; // 몬스터 방어력은 항상 0
 
-  Monster(String name, this.hp, this.attackPowerMax)
+  Monster(String name, this.hp, this.attackPowerMax, int characterDefensePower)
     : name = name,
-      attackPower = Random().nextInt(attackPowerMax) + 1;
+      attackPower = max(
+        Random().nextInt(attackPowerMax) + 1,
+        characterDefensePower,
+      );
 
   @override
   void attack(Entity target) {
     if (target is Character) {
-      int damageDealt = target.defend(attackPower);
+      int damageDealt = max(0, attackPower - target.defensePower);
       print('$name이(가) ${target.name}에게 ${damageDealt}의 데미지를 입혔습니다.');
+      target.takeDamage(damageDealt);
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'monster.dart';
 import 'entity.dart';
 
@@ -15,7 +16,7 @@ class Character extends Entity {
   @override
   void attack(Entity target) {
     if (target is Monster) {
-      int power = isItemActive ? attackPower * 2 : attackPower;
+      int power = attackPower; //isItemActive ? attackPower * 2 : attackPower;
       print('$name이(가) ${target.name}에게 $power의 데미지를 입혔습니다.');
       target.takeDamage(power);
       if (isItemActive) {
@@ -33,10 +34,13 @@ class Character extends Entity {
     hp -= damage;
   }
 
-  int defend(int damage) {
-    int reduced = (damage - defensePower).clamp(0, damage);
-    hp -= reduced;
-    return reduced;
+  int defend(int monsterAttackPower) {
+    int heal = max(0, monsterAttackPower - defensePower);
+    if (heal > 0) {
+      hp += heal;
+      return heal;
+    }
+    return 0;
   }
 
   // 특수 아이템 사용 기능(추가기능)
