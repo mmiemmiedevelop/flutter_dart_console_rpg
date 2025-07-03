@@ -16,7 +16,7 @@ class Character extends Entity {
   @override
   void attack(Entity target) {
     if (target is Monster) {
-      int power = attackPower; //isItemActive ? attackPower * 2 : attackPower;
+      int power = isItemActive ? attackPower * 2 : attackPower;
       print('$name이(가) ${target.name}에게 $power의 데미지를 입혔습니다.');
       target.takeDamage(power);
       if (isItemActive) {
