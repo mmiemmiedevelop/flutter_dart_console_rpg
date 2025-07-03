@@ -39,18 +39,21 @@ void gameStart() {
         killedMonsters.add(monster); // 죽인 몬스터 리스트에 추가
         if (killedMonsters.length == monsters.length) {
           print('모든 몬스터를 물리쳤습니다! 게임 클리어!');
-          exit(0);
+          gameEndisSaveFile();
+          break;
         }
         stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): \n');
         String? nextInput = stdin.readLineSync();
         if (nextInput == null || nextInput.toLowerCase() != 'y') {
-          exit(0);
+          gameEndisSaveFile();
+          break;
         }
         // 새로운 몬스터 랜덤 선택 (죽인 몬스터 제외)
         monster = getRandomMonster(current: monster);
         if (monster == null) {
           print('더 이상 남은 몬스터가 없습니다!');
-          exit(0);
+          gameEndisSaveFile();
+          break;
         }
         print('\n새로운 몬스터가 나타났습니다!');
         monster.showStatus();
@@ -70,8 +73,9 @@ void gameStart() {
       monster.attackCharacter(character);
       // 캐릭터가 죽었는지 체크
       if (character.hp <= 0) {
-        print('\n당신은 패배했습니다...');
-        exit(0);
+        print('\n당신은 패배했습니다...................');
+        gameEndisSaveFile();
+        break;
       }
     }
     character.showStatus();
@@ -174,4 +178,37 @@ String getCharacterName() {
     break;
   }
   return name;
+}
+
+// 3. 게임 종료 후 결과를 파일에 저장하는 기능
+void gameEndisSaveFile() {
+  while (true) {
+    stdout.write('결과를 저장하시겠습니까? (y/n): ');
+    String? input = stdin.readLineSync();
+    if (input == null) {
+      stderr.writeln('입력이 올바르지 않습니다.');
+      continue;
+    }
+    input = input.trim().toLowerCase();
+    if (input == 'y') {
+      // 저장 로직 (예시: 파일에 저장)
+      try {
+        final file = File('result.txt');
+        file.writeAsStringSync(
+          '캐릭터 이름: ${character.name}, 남은 체력: ${character.hp}, 게임 결과: ${character.hp > 0 ? '승리' : '패배'}\n',
+          mode: FileMode.append,
+        );
+        print('결과가 저장되었습니다.');
+      } catch (e) {
+        stderr.writeln('결과 저장에 실패했습니다: \\${e.toString()}');
+      }
+      break;
+    } else if (input == 'n') {
+      print('결과를 저장하지 않습니다.');
+      break;
+    } else {
+      stderr.writeln('y 또는 n으로 입력해주세요.');
+    }
+  }
+  exit(0);
 }
