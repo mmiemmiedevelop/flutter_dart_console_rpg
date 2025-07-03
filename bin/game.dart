@@ -61,6 +61,7 @@ class Game {
       //몬스터의 공격
       if (monster != null && monster.hp > 0) {
         print('\n${monster.name}의 턴');
+        monster.increaseDefenseIfNeeded();
         monster.attack(character);
         if (character.hp <= 0) {
           print('\n당신은 패배했습니다...................');
@@ -245,6 +246,5 @@ class Game {
       print('보너스 체력을 얻었습니다! 현재 체력: ${character.hp}');
     }
   }
-
-  ////////////////////////////////////////////////////////////추가기능//////////////////////////////////////////////////////////
+  
 }
