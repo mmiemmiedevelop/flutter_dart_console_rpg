@@ -30,7 +30,7 @@ class Game {
       stdout.write('\n${character.name}의 턴\n행동을 선택하세요 (1. 공격  2. 방어): ');
       String? input = stdin.readLineSync();
       if (input == '1') {
-        character.attackMonster(monster);
+        character.attack(monster);
         if (monster.hp <= 0) {
           print('${monster.name}을(를) 물리쳤습니다!');
           killedMonsters.add(monster);
@@ -77,8 +77,8 @@ class Game {
         continue;
       }
       if (monster.hp > 0) {
-        print('${monster.name}의 턴');
-        monster.attackCharacter(character);
+        print('\n${monster.name}의 턴');
+        monster.attack(character);
         if (character.hp <= 0) {
           print('\n당신은 패배했습니다...................');
           gameEndisSaveFile();
