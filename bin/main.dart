@@ -19,7 +19,7 @@ void main(List<String> arguments) {
   gameStart();
 }
 
-// 게임 시작 함수
+//0. 게임 시작 함수
 void gameStart() {
   // 랜덤 몬스터 선택
   Monster? monster = getRandomMonster();
@@ -96,26 +96,7 @@ Monster? getRandomMonster({Monster? current}) {
   return newMonster;
 }
 
-// 2. 사용자로부터 캐릭터 이름 입력받기 기능 > whil문으로 제대로 입력해야 이름 저장되고 게임시작
-String getCharacterName() {
-  String name = '';
-  while (true) {
-    stdout.write('캐릭터 이름을 입력하세요: ');
-    String? input = stdin.readLineSync();
-    if (input == null || input.trim().isEmpty) {
-      stderr.writeln('이름을 올바르게 입력하세요.');
-      continue;
-    }
-    if (!RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(input.trim())) {
-      stderr.writeln('이름은 영문 또는 한글만 입력 가능합니다.');
-      continue;
-    }
-    name = input.trim();
-    break;
-  }
-  return name;
-}
-
+//1. 파일로부터 데이터 읽어오기 기능
 /// 캐릭터 데이터 로드 함수
 void loadCharacterStats(String name) {
   try {
@@ -173,4 +154,24 @@ void loadMonsterStats() {
   } catch (e) {
     stderr.writeln('몬스터 데이터를 불러오는 데 실패했습니다: $e');
   }
+}
+
+// 2. 사용자로부터 캐릭터 이름 입력받기 기능 > whil문으로 제대로 입력해야 이름 저장되고 게임시작
+String getCharacterName() {
+  String name = '';
+  while (true) {
+    stdout.write('캐릭터 이름을 입력하세요: ');
+    String? input = stdin.readLineSync();
+    if (input == null || input.trim().isEmpty) {
+      stderr.writeln('이름을 올바르게 입력하세요.');
+      continue;
+    }
+    if (!RegExp(r'^[a-zA-Z가-힣]+$').hasMatch(input.trim())) {
+      stderr.writeln('이름은 영문 또는 한글만 입력 가능합니다.');
+      continue;
+    }
+    name = input.trim();
+    break;
+  }
+  return name;
 }
