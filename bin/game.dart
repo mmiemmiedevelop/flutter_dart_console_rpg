@@ -27,56 +27,37 @@ class Game {
     monster?.showStatus();
 
     while (monster != null) {
-      stdout.write('\n${character.name}의 턴\n행동을 선택하세요 (1. 공격  2. 방어): ');
+      stdout.write(
+        '\n${character.name}의 턴\n행동을 선택하세요 (1. 공격  2. 방어  3. 특수 아이템): ',
+      );
       String? input = stdin.readLineSync();
-      if (input == '1') {
-        character.attack(monster);
-        if (monster.hp <= 0) {
-          print('${monster.name}을(를) 물리쳤습니다!');
-          killedMonsters.add(monster);
-          if (killedMonsters.length == monsters.length) {
-            print('모든 몬스터를 물리쳤습니다! 게임 클리어!');
-            gameEndisSaveFile();
-            break;
+      switch (input) {
+        case '1': // 공격
+          character.attack(monster);
+          if (checkMonsterDefeated(monster)) {
+            monster = handleNextMonster(monster);
+            if (monster == null || character.hp <= 0) break;
+            continue;
           }
-          stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): \n');
-          while (true) {
-            String? nextInput = stdin.readLineSync();
-            if (nextInput == null) {
-              stderr.writeln('입력이 올바르지 않습니다.');
-              continue;
-            }
-            nextInput = nextInput.trim().toLowerCase();
-            if (nextInput == 'y') {
-              monster = getRandomMonster(current: monster);
-              if (monster == null) {
-                print('더 이상 남은 몬스터가 없습니다!');
-                gameEndisSaveFile();
-                break;
-              }
-              print('\n새로운 몬스터가 나타났습니다!');
-              monster.showStatus();
-              break;
-            } else if (nextInput == 'n') {
-              gameEndisSaveFile();
-              break;
-            } else {
-              stderr.writeln('y 또는 n으로 입력해주세요.');
-            }
+          break;
+        case '2': // 방어
+          int blocked = character.defend(monster.attackPower);
+          print('${character.name}이(가) 방어 태세를 취하여 $blocked 만큼 피해를 막았습니다.\n');
+          break;
+        case '3': // 특수 아이템 사용
+          character.useSpecialItem();
+          character.attack(monster);
+          if (checkMonsterDefeated(monster)) {
+            monster = handleNextMonster(monster);
+            if (monster == null || character.hp <= 0) break;
+            continue;
           }
-          if (monster == null || character.hp <= 0) {
-            break;
-          }
+          break;
+        default:
+          print('잘못된 입력입니다. 다시 입력하세요.');
           continue;
-        }
-      } else if (input == '2') {
-        int blocked = character.defend(monster.attackPower);
-        print('${character.name}이(가) 방어 태세를 취하여 $blocked 만큼 피해를 막았습니다.\n');
-      } else {
-        print('잘못된 입력입니다. 다시 입력하세요.');
-        continue;
       }
-      if (monster.hp > 0) {
+      if (monster != null && monster.hp > 0) {
         print('\n${monster.name}의 턴');
         monster.attack(character);
         if (character.hp <= 0) {
@@ -86,11 +67,11 @@ class Game {
         }
       }
       character.showStatus();
-      monster.showStatus();
+      monster?.showStatus();
     }
   }
 
-  //0. 몬스터 랜덤 선택 함수(죽은 몬스터 제외)
+  //0-1. 몬스터 랜덤 선택 함수(죽은 몬스터 제외)
   Monster? getRandomMonster({Monster? current}) {
     final random = Random();
     final available = monsters
@@ -109,7 +90,52 @@ class Game {
     return newMonster;
   }
 
-  // 1. 파일로부터 캐릭터 데이터 읽어오기 기능(캐릭터 객체 생성)
+  //0-2. 다음 몬스터로 넘어가는 공통 메소드
+  Monster? handleNextMonster(Monster currentMonster) {
+    stdout.write('다음 몬스터와 싸우시겠습니까? (y/n): \n');
+    while (true) {
+      String? nextInput = stdin.readLineSync();
+      if (nextInput == null) {
+        stderr.writeln('입력이 올바르지 않습니다.');
+        continue;
+      }
+      nextInput = nextInput.trim().toLowerCase();
+      if (nextInput == 'y') {
+        Monster? nextMonster = getRandomMonster(current: currentMonster);
+        if (nextMonster == null) {
+          print('더 이상 남은 몬스터가 없습니다!');
+          gameEndisSaveFile();
+          return null;
+        }
+        print('\n새로운 몬스터가 나타났습니다!');
+        nextMonster.showStatus();
+        return nextMonster;
+      } else if (nextInput == 'n') {
+        gameEndisSaveFile();
+        return null;
+      } else {
+        stderr.writeln('y 또는 n으로 입력해주세요.');
+      }
+    }
+  }
+
+  //0-3. 몬스터 처치 후 처리 공통 메소드
+  bool checkMonsterDefeated(Monster monster) {
+    if (monster.hp <= 0) {
+      print('${monster.name}을(를) 물리쳤습니다!');
+      killedMonsters.add(monster);
+      if (killedMonsters.length == monsters.length) {
+        print('모든 몬스터를 물리쳤습니다! 게임 클리어!');
+        gameEndisSaveFile();
+        return true;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  ////////////////////////////////////////////////////////////기본기능//////////////////////////////////////////////////////////
+  // 1-1. 파일로부터 캐릭터 데이터 읽어오기 기능(캐릭터 객체 생성)
   void loadCharacterStats() {
     try {
       final assetMgr = AssetManager();
@@ -130,7 +156,7 @@ class Game {
     }
   }
 
-  // 1. 파일로부터 몬스터 데이터 읽어오기 기능(리스트 형태로 저장)
+  // 1-2. 파일로부터 몬스터 데이터 읽어오기 기능(리스트 형태로 저장)
   void loadMonsterStats() {
     try {
       final assetMgr = AssetManager();
@@ -207,6 +233,7 @@ class Game {
     exit(0);
   }
 
+  ////////////////////////////////////////////////////////////추가기능//////////////////////////////////////////////////////////
   // 30% 확률로 캐릭터 체력 보너스 부여
   void addBonusHp() {
     final random = Random();
@@ -215,4 +242,6 @@ class Game {
       print('보너스 체력을 얻었습니다! 현재 체력: ${character.hp}');
     }
   }
+
+  ////////////////////////////////////////////////////////////추가기능//////////////////////////////////////////////////////////
 }

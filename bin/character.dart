@@ -6,6 +6,8 @@ class Character extends Entity {
   int hp;
   final int attackPower;
   final int defensePower;
+  bool isItemActive = false; // 한번만 사용했는지 확인
+  bool isItemOnlyOnce = false; // 전체 게임에서 한 번 사용
 
   Character(String name, this.hp, this.attackPower, this.defensePower)
     : name = name;
@@ -13,8 +15,13 @@ class Character extends Entity {
   @override
   void attack(Entity target) {
     if (target is Monster) {
-      print('$name이(가) ${target.name}에게 $attackPower의 데미지를 입혔습니다.');
-      target.takeDamage(attackPower);
+      int power = isItemActive ? attackPower * 2 : attackPower;
+      print('$name이(가) ${target.name}에게 $power의 데미지를 입혔습니다.');
+      target.takeDamage(power);
+      if (isItemActive) {
+        isItemActive = false;
+        isItemOnlyOnce = true; // 아이템 사용
+      }
     }
   }
 
@@ -30,5 +37,19 @@ class Character extends Entity {
     int reduced = (damage - defensePower).clamp(0, damage);
     hp -= reduced;
     return reduced;
+  }
+
+  // 특수 아이템 사용 기능(추가기능)
+  void useSpecialItem() {
+    if (isItemOnlyOnce) {
+      print('특수 아이템은 한 번만 사용할 수 있습니다.');
+      return;
+    }
+    if (!isItemActive) {
+      isItemActive = true;
+      print('특수 아이템을 사용했습니다! 이번 턴만 공격력이 두 배가 됩니다.');
+    } else {
+      print('이미 아이템을 사용했습니다.');
+    }
   }
 }
