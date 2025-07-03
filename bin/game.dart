@@ -124,6 +124,7 @@ class Game {
       int defense = int.parse(stats[2]);
       String name = getCharacterName();
       character = Character(name, health, attack, defense);
+      addBonusHp(); //30% 확률로 캐릭터 체력 보너스 부여
     } catch (e) {
       stderr.writeln('캐릭터 데이터를 불러오는 데 실패했습니다: $e');
     }
@@ -204,5 +205,14 @@ class Game {
       }
     }
     exit(0);
+  }
+
+  // 30% 확률로 캐릭터 체력 보너스 부여
+  void addBonusHp() {
+    final random = Random();
+    if (random.nextDouble() < 0.3) {
+      character.hp += 10;
+      print('보너스 체력을 얻었습니다! 현재 체력: ${character.hp}');
+    }
   }
 }
