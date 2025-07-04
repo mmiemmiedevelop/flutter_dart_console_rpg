@@ -210,22 +210,16 @@ class Game {
     while (true) {
       stdout.write('결과를 저장하시겠습니까? (y/n): ');
       String? input = stdin.readLineSync();
+
       if (input == null) {
         stderr.writeln('입력이 올바르지 않습니다.');
         continue;
       }
+
       input = input.trim().toLowerCase();
+
       if (input == 'y') {
-        try {
-          final file = File('result.txt');
-          file.writeAsStringSync(
-            '캐릭터 이름: ${character.name}, 남은 체력: ${character.hp}, 게임 결과: ${character.hp > 0 ? '승리' : '패배'}\n',
-            mode: FileMode.append,
-          );
-          print('결과가 저장되었습니다.');
-        } catch (e) {
-          stderr.writeln('결과 저장에 실패했습니다: \\${e.toString()}');
-        }
+        _writeResultToFile();// 결과를 파일에 쓰기
         break;
       } else if (input == 'n') {
         print('결과를 저장하지 않습니다.');
@@ -237,6 +231,22 @@ class Game {
     exit(0);
   }
 
+  // 결과를 파일에 쓰기
+  void _writeResultToFile() {// Dart에서는 private 메소드 표현시 _ 를 사용한다 따로 접근제어자가 없음
+    try {
+      final file = File('result.txt');
+      final gameResult = character.hp > 0 ? '승리' : '패배';
+
+      file.writeAsStringSync(
+        '캐릭터 이름: ${character.name}, 남은 체력: ${character.hp}, 게임 결과: $gameResult\n',
+        mode: FileMode.append,
+      );
+      print('결과가 저장되었습니다.');
+    } catch (e) {
+      stderr.writeln('결과 저장에 실패했습니다: ${e.toString()}');
+    }
+  }
+
   ////////////////////////////////////////////////////////////추가기능//////////////////////////////////////////////////////////
   // 30% 확률로 캐릭터 체력 보너스 부여
   void addBonusHp() {
@@ -246,5 +256,4 @@ class Game {
       print('보너스 체력을 얻었습니다! 현재 체력: ${character.hp}');
     }
   }
-  
 }
