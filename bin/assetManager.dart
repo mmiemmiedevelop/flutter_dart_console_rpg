@@ -16,6 +16,7 @@ class AssetManager {
       stderr.writeln('ERROR: assets 폴더(${assetsDir.path})를 찾을 수 없습니다.');
       exit(1);
     }
+
     return assetsDir.listSync(recursive: true).whereType<File>().toList();
   }
 

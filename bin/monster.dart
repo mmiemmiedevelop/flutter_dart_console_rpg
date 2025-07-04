@@ -21,6 +21,7 @@ class Monster extends Entity {
   void attack(Entity target) {
     if (target is Character) {
       int damageDealt = max(0, attackPower - target.defensePower + defense);
+
       print('$name이(가) ${target.name}에게 ${damageDealt}의 데미지를 입혔습니다.');
       target.takeDamage(damageDealt);
     }
@@ -37,6 +38,7 @@ class Monster extends Entity {
   // (추가기능) 3턴마다 방어력 2 증가
   void increaseDefenseIfNeeded() {
     defenseTurnCounter++;
+
     if (defenseTurnCounter >= 3) {
       defense += 2;
       print('$name의 방어력이 증가했습니다! 현재 방어력: $defense');

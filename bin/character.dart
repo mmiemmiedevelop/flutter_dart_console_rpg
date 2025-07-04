@@ -17,8 +17,10 @@ class Character extends Entity {
   void attack(Entity target) {
     if (target is Monster) {
       int power = isItemActive ? attackPower * 2 : attackPower;
+
       print('$name이(가) ${target.name}에게 $power의 데미지를 입혔습니다.');
       target.takeDamage(power);
+
       if (isItemActive) {
         isItemActive = false;
         isItemOnlyOnce = true; // 아이템 사용
@@ -36,10 +38,12 @@ class Character extends Entity {
 
   int defend(int monsterAttackPower) {
     int heal = max(0, monsterAttackPower - defensePower);
+
     if (heal > 0) {
       hp += heal;
       return heal;
     }
+
     return 0;
   }
 
@@ -49,6 +53,7 @@ class Character extends Entity {
       print('특수 아이템은 한 번만 사용할 수 있습니다.');
       return;
     }
+
     if (!isItemActive) {
       isItemActive = true;
       print('특수 아이템을 사용했습니다! 이번 턴만 공격력이 두 배가 됩니다.');
