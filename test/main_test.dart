@@ -1,7 +1,6 @@
 import 'package:test/test.dart';
 import '../bin/character.dart';
 import '../bin/monster.dart';
-import '../bin/entity.dart';
 
 void main() {
   group('Character', () {
