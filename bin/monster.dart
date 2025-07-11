@@ -22,7 +22,7 @@ class Monster extends Entity {
     if (target is Character) {
       int damageDealt = max(0, attackPower - target.defensePower + defense);
 
-      print('$name이(가) ${target.name}에게 ${damageDealt}의 데미지를 입혔습니다.');
+      print('$name이(가) ${target.name}에게 $damageDealt의 데미지를 입혔습니다.');
       target.takeDamage(damageDealt);
     }
   }

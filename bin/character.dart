@@ -61,4 +61,16 @@ class Character extends Entity {
       print('이미 아이템을 사용했습니다.');
     }
   }
+
+
+  // 30% 확률로 캐릭터 체력 보너스 부여(추가 기능)
+  void addBonusHp() {
+    final random = Random();
+
+    if (random.nextDouble() < 0.3) {
+      hp += 10;
+      print('보너스 체력을 얻었습니다! 현재 체력: $hp');
+    }
+  }
+
 }
